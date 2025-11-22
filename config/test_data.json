@@ -1,0 +1,79 @@
+{
+    "destinations": [
+        "London",
+        "Paris",
+        "New York",
+        "Dubai",
+        "Tokyo"
+    ],
+    "search_scenarios": [
+        {
+            "destination": "London",
+            "adults": 2,
+            "children": 0,
+            "rooms": 1,
+            "days_from_now": 30,
+            "nights": 3
+        },
+        {
+            "destination": "Paris",
+            "adults": 2,
+            "children": 1,
+            "rooms": 1,
+            "days_from_now": 45,
+            "nights": 5
+        },
+        {
+            "destination": "Dubai",
+            "adults": 4,
+            "children": 0,
+            "rooms": 2,
+            "days_from_now": 60,
+            "nights": 7
+        }
+    ],
+    "filters": {
+        "price_ranges": [
+            {
+                "min": 50,
+                "max": 150
+            },
+            {
+                "min": 100,
+                "max": 250
+            }
+        ],
+        "star_ratings": [
+            3,
+            4,
+            5
+        ],
+        "sort_options": [
+            "price",
+            "rating",
+            "distance"
+        ]
+    },
+    "guest_configurations": [
+        {
+            "adults": 1,
+            "children": 0,
+            "rooms": 1
+        },
+        {
+            "adults": 2,
+            "children": 0,
+            "rooms": 1
+        },
+        {
+            "adults": 2,
+            "children": 2,
+            "rooms": 1
+        },
+        {
+            "adults": 4,
+            "children": 0,
+            "rooms": 2
+        }
+    ]
+}

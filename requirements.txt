@@ -1,0 +1,18 @@
+# Core Selenium and WebDriver
+selenium==4.15.2
+webdriver-manager==4.0.1
+
+# Testing Framework
+pytest==7.4.3
+pytest-html==4.1.1
+pytest-xdist==3.5.0
+
+# Reporting
+allure-pytest==2.13.2
+
+# Utilities
+python-dotenv==1.0.0
+Faker==20.1.0
+
+# Data handling
+jsonschema==4.20.0
