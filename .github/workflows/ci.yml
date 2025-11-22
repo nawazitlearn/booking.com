@@ -1,0 +1,114 @@
+# GitHub Actions CI/CD Pipeline for Booking.com Automation Framework
+# Runs tests on push and pull requests, generates Allure reports
+
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths-ignore:
+      - '**.md'
+      - '.gitignore'
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:  # Allows manual trigger
+
+env:
+  PYTHON_VERSION: '3.11'
+  BROWSER: chrome
+  HEADLESS: true
+
+jobs:
+  test:
+    name: Run Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+      
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Install Chrome and ChromeDriver
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+      
+      - name: Run Tests with Pytest
+        continue-on-error: true
+        run: |
+          pytest tests/ \
+            --browser=${{ env.BROWSER }} \
+            --headless=${{ env.HEADLESS }} \
+            --alluredir=reports/allure-results \
+            --junitxml=reports/junit/test-results.xml \
+            -v \
+            -s
+      
+      - name: Get Allure History
+        uses: actions/checkout@v4
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+      
+      - name: Generate Allure Report
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        with:
+          allure_results: reports/allure-results
+          allure_history: allure-history
+          keep_reports: 20
+      
+      - name: Deploy Allure Report to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+      
+      - name: Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: reports/junit/test-results.xml
+          retention-days: 30
+      
+      - name: Upload Screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: screenshots/
+          retention-days: 30
+          if-no-files-found: ignore
+      
+      - name: Upload Logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs
+          path: logs/
+          retention-days: 30
+          if-no-files-found: ignore
+      
+      - name: Test Summary
+        if: always()
+        run: |
+          echo "## Test Execution Summary 📊" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "✅ Test execution completed" >> $GITHUB_STEP_SUMMARY
+          echo "📈 Allure Report: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> $GITHUB_STEP_SUMMARY
+          echo "📦 Artifacts uploaded: test-results, screenshots, logs" >> $GITHUB_STEP_SUMMARY

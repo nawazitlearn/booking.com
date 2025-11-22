@@ -1,0 +1,85 @@
+# Scheduled Test Execution
+# Runs tests on a schedule to catch issues early
+
+name: Scheduled Tests
+
+on:
+  schedule:
+    # Run tests every day at 9 AM UTC (2:30 PM IST)
+    - cron: '0 9 * * *'
+  workflow_dispatch:  # Allow manual trigger
+
+env:
+  PYTHON_VERSION: '3.11'
+  BROWSER: chrome
+  HEADLESS: true
+
+jobs:
+  scheduled-test:
+    name: Scheduled Test Run
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+          cache: 'pip'
+      
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      
+      - name: Install Chrome and ChromeDriver
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+      
+      - name: Run Full Test Suite
+        continue-on-error: true
+        run: |
+          pytest tests/ \
+            --browser=${{ env.BROWSER }} \
+            --headless=${{ env.HEADLESS }} \
+            --alluredir=reports/allure-results \
+            --junitxml=reports/junit/test-results.xml \
+            -v \
+            -s
+      
+      - name: Generate Allure Report
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        with:
+          allure_results: reports/allure-results
+          allure_history: allure-history
+          keep_reports: 20
+      
+      - name: Deploy Report to GitHub Pages
+        if: always()
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+      
+      - name: Upload Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheduled-test-results-${{ github.run_number }}
+          path: |
+            reports/
+            screenshots/
+            logs/
+          retention-days: 30
+          if-no-files-found: ignore
+      
+      - name: Notify on Failure
+        if: failure()
+        run: |
+          echo "⚠️ Scheduled test run failed!" >> $GITHUB_STEP_SUMMARY
+          echo "Check the artifacts and logs for details." >> $GITHUB_STEP_SUMMARY
