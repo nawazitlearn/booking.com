@@ -4,9 +4,7 @@ This document explains the CI/CD pipelines configured for the Booking.com Automa
 
 ## 🚀 Overview
 
-The project includes **two CI/CD platforms**:
-1. **GitHub Actions** (Primary) - Integrated with GitHub
-2. **Azure Pipelines** (Alternative) - For Azure DevOps users
+The project uses **GitHub Actions** for continuous integration and deployment, providing automated testing, reporting, and deployment to GitHub Pages.
 
 ---
 
@@ -80,31 +78,6 @@ After the first successful run:
 
 ---
 
-### Azure Pipelines (Alternative)
-
-If you prefer Azure DevOps:
-
-#### Step 1: Create Azure DevOps Project
-
-1. Go to https://dev.azure.com
-2. Create a new project
-3. Name it: `booking-automation`
-
-#### Step 2: Connect GitHub Repository
-
-1. In Azure DevOps, go to **Pipelines** → **Create Pipeline**
-2. Select **GitHub** as source
-3. Authorize Azure Pipelines to access your repository
-4. Select repository: `nawazitlearn/booking.com`
-
-#### Step 3: Use Existing Pipeline
-
-1. Azure will detect `azure-pipelines.yml`
-2. Review the configuration
-3. Click **Run** to start the pipeline
-
----
-
 ## 📊 Viewing Results
 
 ### GitHub Actions
@@ -122,12 +95,6 @@ If you prefer Azure DevOps:
   - Screenshots on failures
   - Trend graphs
 
-### Azure Pipelines
-
-**Test Results:**
-- Go to **Pipelines** → Select run
-- View **Tests** tab for detailed results
-- Download artifacts from **Artifacts** section
 
 ---
 

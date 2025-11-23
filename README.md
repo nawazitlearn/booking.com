@@ -1,11 +1,11 @@
 # Booking.com Test Automation Framework
 
 [![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
-[![Selenium](https://img.shields.io/badge/Selenium-4.15+-green.svg)](https://www.selenium.dev/)
-[![Pytest](https://img.shields.io/badge/Pytest-7.4+-orange.svg)](https://pytest.org/)
+[![Selenium](https://img.shields.io/badge/Selenium-4.26+-green.svg)](https://www.selenium.dev/)
+[![Pytest](https://img.shields.io/badge/Pytest-8.3+-orange.svg)](https://pytest.org/)
 [![Allure](https://img.shields.io/badge/Allure-2.13+-yellow.svg)](https://docs.qameta.io/allure/)
 
-An industry-level test automation framework for [Booking.com](https://www.booking.com) built with Python, Selenium, Pytest, and Allure reporting. The framework follows the Page Object Model (POM) design pattern and includes comprehensive logging, error handling, and CI/CD integration with Azure DevOps.
+An industry-level test automation framework for [Booking.com](https://www.booking.com) built with Python, Selenium, Pytest, and Allure reporting. The framework follows the Page Object Model (POM) design pattern and includes comprehensive logging, error handling, and CI/CD integration with GitHub Actions.
 
 ## 🚀 Features
 
@@ -17,7 +17,7 @@ An industry-level test automation framework for [Booking.com](https://www.bookin
 - ✅ **Screenshot on Failure** - Automatic screenshot capture for failed tests
 - ✅ **Custom Decorators** - Retry logic, logging, and error handling
 - ✅ **Test Data Management** - JSON-based test data configuration
-- ✅ **Azure DevOps Integration** - Ready-to-use CI/CD pipeline
+- ✅ **GitHub Actions CI/CD** - Automated testing with GitHub Actions
 - ✅ **Parallel Execution** - Run tests in parallel with pytest-xdist
 - ✅ **Industry-Standard Code** - Follows PEP 8 and best practices
 
@@ -46,7 +46,7 @@ booking-automation-framework/
 ├── reports/                    # Test reports (generated)
 ├── logs/                       # Log files (generated)
 ├── screenshots/                # Screenshots (generated)
-├── azure-pipelines.yml         # Azure DevOps pipeline
+├── .github/workflows/ci.yml    # GitHub Actions CI/CD pipeline
 ├── pytest.ini                  # Pytest configuration
 ├── requirements.txt            # Python dependencies
 ├── .gitignore                  # Git ignore file
@@ -231,29 +231,30 @@ Edit `config/test_data.json` to add or modify test data:
 }
 ```
 
-## 🚀 CI/CD with Azure DevOps
+## 🚀 CI/CD with GitHub Actions
 
-### Setup Azure Pipeline
+### Automatic Testing
 
-1. **Create New Pipeline** in Azure DevOps
-2. **Select Repository** containing this framework
-3. **Use Existing YAML** and select `azure-pipelines.yml`
-4. **Run Pipeline**
+The framework includes a GitHub Actions workflow that automatically:
+- Runs on push to `main` and `develop` branches
+- Executes all tests in headless Chrome
+- Generates and publishes Allure reports to GitHub Pages
+- Uploads test results, screenshots, and logs as artifacts
 
-### Pipeline Features
+### Manual Trigger
 
-- ✅ Automatic trigger on commits to `main` and `develop` branches
-- ✅ Runs tests in headless mode
-- ✅ Generates Allure reports
-- ✅ Publishes test results to Azure DevOps
-- ✅ Publishes artifacts (reports, screenshots, logs)
+1. Go to **Actions** tab in your GitHub repository
+2. Select **CI/CD Pipeline** workflow
+3. Click **Run workflow** button
+4. Select branch and click **Run workflow**
 
-### View Pipeline Results
+### View Results
 
-1. Navigate to **Pipelines** in Azure DevOps
-2. Select the pipeline run
-3. View **Test Results** tab for test summary
-4. Download **Artifacts** for detailed reports
+1. **Test Results**: Navigate to **Actions** → Select workflow run → View summary
+2. **Allure Report**: Visit `https://<username>.github.io/<repository-name>/`
+3. **Artifacts**: Download from workflow run page (test-results, screenshots, logs)
+
+**Note**: Enable GitHub Pages in repository settings (Settings → Pages → Source: gh-pages branch) to view Allure reports online.
 
 ## 📝 Writing New Tests
 
@@ -310,18 +311,14 @@ Available pytest markers:
 
 ### Issue: WebDriver not found
 
-**Solution:** The framework uses Selenium Manager (built-in to Selenium 4.6+) which automatically downloads drivers. Ensure you have internet connection on first run.
+**Solution:** The framework uses Selenium Manager (built-in to Selenium 4.6+) which automatically downloads and manages browser drivers. Ensure you have an internet connection on the first run.
 
-### Issue: ChromeDriver architecture mismatch (Win32 error)
+### Issue: Browser driver issues
 
-**Solution:** The framework now uses Selenium Manager which correctly handles win64 architecture. If you still encounter issues:
-```bash
-# Clear old webdriver-manager cache
-Remove-Item -Path "$env:USERPROFILE\.wdm" -Recurse -Force
-
-# Run tests again
-pytest tests/ -m smoke -v
-```
+**Solution:** Selenium Manager handles all driver management automatically. If you encounter issues:
+1. Ensure your browser (Chrome/Firefox/Edge) is up to date
+2. Check your internet connection
+3. Clear Selenium cache if needed: `Remove-Item -Path "$env:USERPROFILE\.cache\selenium" -Recurse -Force`
 
 See [TROUBLESHOOTING.md](TROUBLESHOOTING.md) for more details.
 
@@ -366,5 +363,6 @@ This project is for educational and testing purposes only.
 ---
 
 **Note:** This framework is designed for testing purposes only. Always respect the website's terms of service and robots.txt when running automated tests.
-#   C I / C D   A c t i v e  
+#   C I / C D   A c t i v e 
+ 
  
